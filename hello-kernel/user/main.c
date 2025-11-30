@@ -80,7 +80,28 @@ int main(int argc, char *argv[]) {
 
         printf("[_IOW] IOCTL_SET_ID: id -> %d 로 설정 요청 완료.\n", id);
 
-    } else {
+    } else if(strcmp(argv[1], "msg")==0){
+    
+        if(argc <3){
+            usage(argv[0]);
+            close(fd);
+            return EXIT_FAILURE;
+        }
+
+        struct hello_msg msg;
+        msg.id = 0; 
+        strncpy(msg.text, argv[2], sizeof(msg.text)-1);
+        msg.text[sizeof(msg.text)-1] = '\0'; 
+
+        if(ioctl(fd, IOCTL_MSG, &msg) == -1){
+            perror("ioctl(IOCTL_MSG)");
+            close(fd);
+            return EXIT_FAILURE;
+        }
+
+        printf("[_IOWR] IOCTL_MSG: id = %d, text = %s\n", msg.id, msg.text);
+    }
+    else {
         usage(argv[0]);
         close(fd);
         return EXIT_FAILURE;
