@@ -14,7 +14,7 @@ static void usage(const char *prog) {
         "  %s set <id>          # _IOW  : 커널의 id 설정\n",
         "  %s msg <text>        # _IOWR : 구조체로 메시지 교환\n",
         prog, prog, prog, prog);
-
+}
 static int open_device(void) {
     int fd = open(DEVICE_PATH, O_RDWR);
     if (fd < 0) {
