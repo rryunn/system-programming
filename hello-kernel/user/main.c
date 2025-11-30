@@ -44,11 +44,41 @@ int main(int argc, char *argv[]) {
 
     } else if (strcmp(argv[1], "get") == 0) {
 
-        // to be implemented 
+        int id = 0;
+
+        if (ioctl(fd, IOCTL_GET_ID, &id) == -1) {
+            perror("ioctl(IOCTL_GET_ID)");
+            close(fd);
+            return EXIT_FAILURE;
+        }
+
+        printf("[_IOR] IOCTL_GET_ID: id = %d\n", id);
 
     } else if (strcmp(argv[1], "set") == 0) {
 
-        // to be implemented 
+         if (argc < 3) {
+        usage(argv[0]);
+        close(fd);
+        return EXIT_FAILURE;
+        }
+
+        char *endptr = NULL;
+        long val = strtol(argv[2], &endptr, 10);
+        if (*argv[2] == '\0' || (endptr && *endptr != '\0')) {
+            fprintf(stderr, "invalid id: %s\n", argv[2]);
+            close(fd);
+            return EXIT_FAILURE;
+        }
+
+        int id = (int)val;
+
+        if (ioctl(fd, IOCTL_SET_ID, &id) == -1) {
+            perror("ioctl(IOCTL_SET_ID)");
+            close(fd);
+            return EXIT_FAILURE;
+        }
+
+        printf("[_IOW] IOCTL_SET_ID: id -> %d 로 설정 요청 완료.\n", id);
 
     } else {
         usage(argv[0]);

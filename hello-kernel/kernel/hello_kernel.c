@@ -52,40 +52,33 @@ static long hello_ioctl(struct file *file, unsigned int cmd, unsigned long arg) 
     switch (cmd) {
 
     case IOCTL_PRINT:    /* _IO */
-
-
-        // to be implemented
-
         pr_info("hello_kernel: Hello, User! I'm %d\n", current_id);
         return 0;
 
     case IOCTL_GET_ID:   /* _IOR */
-
-
-        // to be implemented
-
-
+    {
+        int tmp = current_id;
+        if (copy_to_user((void __user *)arg, &tmp, sizeof(tmp)))
+            return -EFAULT;
+        pr_info("hello_kernel: GET_ID -> %d\n", tmp);
         return 0;
+    }
 
     case IOCTL_SET_ID:   /* _IOW */
-
-
-        // to be implemented
-
-        
+    {
+        int new_id;
+        if (copy_from_user(&new_id, (void __user *)arg, sizeof(new_id)))
+            return -EFAULT;
+        pr_info("hello_kernel: SET_ID %d -> %d\n", current_id, new_id);
+        current_id = new_id;
         return 0;
-
-    // case ... : /* _IOWR */
-
-
-    //     return 0;
+    }
 
     default:
-
-        return -ENOTTY; /* 지원하지 않는 ioctl */
-
+        return -ENOTTY;
     }
 }
+
 
 static int __init hello_init(void) {
  int ret;
