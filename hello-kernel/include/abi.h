@@ -17,5 +17,9 @@
 #define IOCTL_GET_ID _IOR(IOCTL_MAGIC, 2, int)
 #define IOCTL_SET_ID _IOW(IOCTL_MAGIC, 3, int)
 //  #define IOCTL_SOMETHING _IOWR( /** args */)
-
+struct hello_msg {
+    int id;
+    char text[32];
+};
+#define IOCTL_MSG _IOWR(IOCTL_MAGIC, 4, struct hello_msg)
 #endif 

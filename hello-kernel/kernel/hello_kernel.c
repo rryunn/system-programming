@@ -52,10 +52,13 @@ static long hello_ioctl(struct file *file, unsigned int cmd, unsigned long arg) 
     switch (cmd) {
 
     case IOCTL_PRINT:    /* _IO */
+    //데이터없음. 지금은 그냥 print역할!
         pr_info("hello_kernel: Hello, User! I'm %d\n", current_id);
         return 0;
 
     case IOCTL_GET_ID:   /* _IOR */
+    //kernel ->user방향으로 데이터를 받을떄.
+    //커널의 current id를 user가 읽어오는 방식
     {
         int tmp = current_id;
         if (copy_to_user((void __user *)arg, &tmp, sizeof(tmp)))
@@ -65,6 +68,8 @@ static long hello_ioctl(struct file *file, unsigned int cmd, unsigned long arg) 
     }
 
     case IOCTL_SET_ID:   /* _IOW */
+    //user -> kernel방향으로 데이터를 보낼때.
+    //user가 int id를 커널에 보내서 current_id로 설정하는 방식
     {
         int new_id;
         if (copy_from_user(&new_id, (void __user *)arg, sizeof(new_id)))
@@ -73,7 +78,19 @@ static long hello_ioctl(struct file *file, unsigned int cmd, unsigned long arg) 
         current_id = new_id;
         return 0;
     }
-
+    case IOCTL_MSG:     /* _IOWR */
+    {
+        struct hello_msg msg;
+        if (copy_from_user(&msg, (void __user *)arg, sizeof(msg)))
+            return -EFAULT;
+        pr_info("hello_kernel: MSG SET id=%d, text=%s\n", msg.id, msg.text);
+        
+        msg.id = current_id;
+        if(copy_to_user((void __user *)arg, &msg, sizeof(msg)))
+            return -EFAULT;
+        pr_info("hello_kernel: MSG GET id=%d, text=%s\n", msg.id, msg.text);
+        return 0;
+    }
     default:
         return -ENOTTY;
     }
