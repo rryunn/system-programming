@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
             return EXIT_FAILURE;
         }
  
-        printf("[_IOW] HELLO_IOCTL_SET_ID: id %d로 설정 요청 완료.\n", id);
+        printf("[_IOW] HELLO_IOCTL_SET_ID: id -> %d로 설정 요청 완료.\n", id);
     //_IOWR 타입 구현. 구조체 단위의 양방향 데이터 교환
     } else if(strcmp(argv[1], "msg")==0){
     
@@ -97,8 +97,8 @@ int main(int argc, char *argv[]) {
 
         struct hello_msg msg; //abi.h에 정의된 구조체 사용
         msg.id = 0; 
-        strncpy(msg.text, argv[2], sizeof(msg.text)-1); //사용자가 입력한 메시지 복사.
         
+        strncpy(msg.text, argv[2], sizeof(msg.text)-1); //사용자가 입력한 메시지 복사.
         msg.text[sizeof(msg.text)-1] = '\0'; //문자열 끝 처리
 
         //ioctl 호출로 msg를 커널로 보내고, 커널이 수정한 msg를 다시 받아옴.

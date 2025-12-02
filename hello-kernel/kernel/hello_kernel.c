@@ -71,11 +71,11 @@ static long hello_ioctl(struct file *file, unsigned int cmd, unsigned long arg) 
     //user -> kernel방향으로 데이터를 보낼 때.
     //user가 int id를 커널에 보내서 current_id로 설정하는 방식
     {
-        int new_id;
-        if (copy_from_user(&new_id, (void __user *)arg, sizeof(new_id)))
+        int newId;
+        if (copy_from_user(&newId, (void __user *)arg, sizeof(newId)))
             return -EFAULT; // copy from user: 유저 공간에서 커널 공간으로 데이터 복사
-        pr_info("hello_kernel: SET_ID %d -> %d\n", current_id, new_id);
-        current_id = new_id; // 학번 변경 적용
+        pr_info("hello_kernel: SET_ID %d -> %d\n", current_id, newId);
+        current_id = newId; // 학번 변경 적용
         return 0;
     }
     case IOCTL_MSG:     /* _IOWR */
