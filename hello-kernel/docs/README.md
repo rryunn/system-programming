@@ -1,4 +1,4 @@
-# Hello Kernel – 과제용 README 
+# Hello Kernel – 과제용 README
 
 이 리포지토리는 System Programming 과목 **Hello Kernel 과제**용 코드입니다.  
 이 파일은 빌드 및 커널 모듈 로드/실행/제거 절차만 간단히 정리한 문서입니다.
@@ -112,3 +112,32 @@ make clean
 가 제거됩니다. (이미 로드된 모듈은 `sudo rmmod hello_kernel`으로 먼저 내린 뒤 `make clean` 을 실행하세요.)
 
 <!-- ## Optional. _IOWR 명세는 이 아래에 작성할 것 -->
+
+## 7. \_IOWR 구조체 정의
+
+양방향 데이터 교환을 위해 다음과 같이 데이터 구조와 동작을 설계하였습니다.
+
+```c
+struct hello_msg{
+    int id; //학번 정보
+    char text[32]; //텍스트 메시지
+};
+```
+
+호출 시 데이터는 USER -> KERNEL -> USER 순으로 이동합니다.
+
+1. INPUT(USER->KERNEL)
+
+- 유저 프로그램이 struct hello_msg에 임의의 데이터를 담아 ioctl을 호출합니다.
+- 커널은 copy_from_user를 통해 이 데이터를 수신하고, mesg에 수신된 내용을 출력합니다.
+
+2. KERNEL
+
+- 커널 모듈은 수신된 구조체의 내용을 수정합니다.
+- ID 필드: 현재 커널 모듈 내부에 저장된 current_id 값으로 덮어씁니다.
+- TEXT 필드: 커널이 보내는 응답 메시지로 변경합니다.
+
+3. OUTPUT(KERNEL->USER)
+
+- 커널은 수정된 구조체 데이터를 copy_to_user를 통해 다시 유저 공간으로 반환합니다.
+- 유저 프로그램은 반환된 구조체를 읽어, 커널이 보내준 학번과 메시지를 확인합니다.
