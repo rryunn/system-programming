@@ -78,8 +78,6 @@ int main(int argc, char *argv[]) {
             return EXIT_FAILURE;
         }
 
-        int id = (int)val; //전송할 데이터 준비
-
         //&id를 넘겨주면 커널은 copy form user를 통해 이 값을 읽어감.
         if (ioctl(fd, IOCTL_SET_ID, &id) == -1) {
             perror("ioctl(IOCTL_SET_ID)");
